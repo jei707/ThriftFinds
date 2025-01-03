@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="611.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.thrifters.controller.LoginController">
+   <children>
+      <ImageView fitHeight="371.0" fitWidth="321.0" layoutX="-42.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@ImageView%20Pictures/loginpic.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="thriftfindsLogo" fitHeight="33.0" fitWidth="64.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../Downloads/fashion.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="24.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Thriftfinds!" wrappingWidth="205.80859375">
+         <font>
+            <Font name="Palace Script MT" size="32.0" />
+         </font>
+      </Text>
+      <Text layoutX="261.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="22.0" />
+         </font>
+      </Text>
+      <Text fill="#757575" layoutX="261.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome back! Please login to your account." wrappingWidth="261.40966796875">
+         <font>
+            <Font name="Arial" size="9.0" />
+         </font>
+      </Text>
+      <Text fill="#5b5b5b" layoutX="261.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
+         <font>
+            <Font name="Arial" size="13.0" />
+         </font>
+      </Text>
+      <TextField fx:id="usernameTextField" layoutX="261.0" layoutY="111.0" prefHeight="33.0" prefWidth="278.0" promptText="Username" />
+      <Text fill="#5b5b5b" layoutX="261.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password">
+         <font>
+            <Font name="Arial" size="13.0" />
+         </font>
+      </Text>
+      <TextField fx:id="passwordTextField" layoutX="261.0" layoutY="175.0" prefHeight="33.0" prefWidth="278.0" promptText="Password" />
+      <CheckBox layoutX="263.0" layoutY="216.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="105.0" text="Remember Me">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </CheckBox>
+      <Hyperlink fx:id="forgotPassword" layoutX="452.0" layoutY="214.0" text="Forgot Password?">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Hyperlink>
+      <Button fx:id="loginButton" layoutX="261.0" layoutY="251.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="278.0" style="-fx-background-color: #8a8a8a;" text="Login" textFill="WHITE" onAction="#handleLogin">
+         <font>
+            <Font name="Arial Rounded MT Bold" size="15.0" />
+         </font>
+      </Button>
+      <Text layoutX="263.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="New User?">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Text>
+      <Hyperlink fx:id="signUp" layoutX="322.0" layoutY="308.0" text="Signup" onAction="#handleSignUp" />
+   </children>
+</AnchorPane>
