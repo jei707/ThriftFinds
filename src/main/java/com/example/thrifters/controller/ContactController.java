@@ -76,6 +76,10 @@ public class ContactController {
         switchScene(event, "/com/example/thrifters/cartUserInterface.fxml");
     }
 
+    public void onUsersButtonClick(ActionEvent event) {
+        switchScene(event, "/com/example/thrifters/ordersUserInterface.fxml");
+    }
+
     @FXML
     private void onAboutShopButtonClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/abtShopUserInterface.fxml");

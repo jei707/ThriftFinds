@@ -2,14 +2,20 @@ package com.example.thrifters.controller;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.List;
 
 import com.example.thrifters.database.DatabaseConnection;
-import com.example.thrifters.model.Order;  
+import com.example.thrifters.model.Order;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,29 +29,24 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
 public class OrdersController {
 
     // FXML Elements
     @FXML private TextField searchBox;
-    @FXML private Button adminProfile2;
-    @FXML private Button homeUi2;
-    @FXML private Button orders2;
-    @FXML private Button orders12;
-    @FXML private Button orders112;
+    @FXML private Button adminProfile2, homeUi2, orders2, orders12, orders112;
     @FXML private Hyperlink logout2;
     @FXML private Pane productContainer;
     @FXML private TableView<Order> ordersTable;
-    @FXML private TableColumn<Order, Integer> orderID;
-    @FXML private TableColumn<Order, Integer> userID;
-    @FXML private TableColumn<Order, Date> orderDate;
-    @FXML private TableColumn<Order, String> address;
-    @FXML private TableColumn<Order, String> action;
+    @FXML private TableColumn<Order, Integer> orderID, userID;
+    @FXML private TableColumn<Order, Timestamp> orderDate;
+    @FXML private TableColumn<Order, String> address, status;
+    @FXML private TableColumn<Order, Double> totalAmount;
     @FXML private Text ordersText;
     @FXML private ImageView searchIcon;
 
@@ -67,31 +68,27 @@ public class OrdersController {
         }
     }
 
-    // Event handler for Home button
+    // Event handlers for navigation buttons
     @FXML
     private void onHomeButtonClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/homeAdminInterface.fxml");
     }
 
-    // Event Handler for Orders button
     @FXML
     private void onOrdersButtonClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/ordersAdminInterface.fxml");
     }
 
-    // Event Handler for Users button
     @FXML
     private void onUsersButtonClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/usersAdminInterface.fxml");
     }
 
-    // Event Handler for Reports button
     @FXML
     private void onReportsButtonClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/reportAdminInterface.fxml");
     }
 
-    // Event Handler for Logout hyperlink
     @FXML
     private void onLogoutClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/thriftfindsLoginPage.fxml");
@@ -101,49 +98,92 @@ public class OrdersController {
     private void onAdminProfileClick(ActionEvent event) {
         switchScene(event, "/com/example/thrifters/profileAdminInterface.fxml");
     }
-    // Event handler for Search
+
+    // Event handler for search
     @FXML
     private void onSearch(ActionEvent event) {
         String query = searchBox.getText();
         System.out.println("Searching for: " + query);
-        // Implement search logic
+        // Implement search logic if needed
     }
 
-
-        // Initialize method (if needed for further setup)
+    // Initialize method to set up the table and database connection
     @FXML
     public void initialize() {
-        System.out.println("OrdersController initialized.");
-        loadOrdersFromDatabase();  // Load orders from the database
+        configureTableColumns();
+        ObservableList<Order> orders = fetchOrdersFromDatabase();
+        ordersTable.setItems(orders);
+        ordersTable.setEditable(true); // Enable editing for the table
     }
 
-    // Method to load orders from the database
-    private void loadOrdersFromDatabase() {
-        ObservableList<Order> orderList = FXCollections.observableArrayList();
+    private void configureTableColumns() {
+        if (orderID != null) {
+            orderID.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getOrderId()).asObject());
+        }
+        if (userID != null) {
+            userID.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getUserId()).asObject());
+        }
+        if (orderDate != null) {
+            orderDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOrderDate()));
+        }
+        if (address != null) {
+            address.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress()));
+        }
+        if (totalAmount != null) {
+            totalAmount.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotalAmount()).asObject());
+        }
+        if (status != null) {
+            status.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
+            configureStatusColumn();
+        }
+    }
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM Orders"; // Modify this query if needed
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+    private void configureStatusColumn() {
+        List<String> statusOptions = List.of("pending", "completed", "shipped", "cancelled");
+        status.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableArrayList(statusOptions)));
+        status.setOnEditCommit(event -> {
+            Order order = event.getRowValue();
+            String newStatus = event.getNewValue();
+            order.setStatus(newStatus);
+            updateOrderStatusInDatabase(order.getOrderId(), newStatus);
+        });
+    }
+
+    private void updateOrderStatusInDatabase(int orderId, String newStatus) {
+        String query = "UPDATE orders SET status = ? WHERE order_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, newStatus);
+            pstmt.setInt(2, orderId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ObservableList<Order> fetchOrdersFromDatabase() {
+        ObservableList<Order> orders = FXCollections.observableArrayList();
+        String query = "SELECT orders.order_id, orders.user_id, orders.order_date, users.address, orders.total_amount, orders.status " +
+                       "FROM orders INNER JOIN users ON orders.user_id = users.user_id";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                int orderId = rs.getInt("order_id");
-                int userId = rs.getInt("user_id");
-                Date orderDate = rs.getDate("order_date");
-                String address = rs.getString("address");
-                // Fetch other required details here (for example, action column)
-
-                // Add order to the list
-                Order order = new Order(orderId, userId, orderDate, address);
-                orderList.add(order);
+                Order order = new Order(
+                    rs.getInt("order_id"),
+                    rs.getInt("user_id"),
+                    rs.getTimestamp("order_date"),
+                    rs.getString("address"),
+                    rs.getDouble("total_amount"),
+                    rs.getString("status")
+                );
+                orders.add(order);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Error occurred while loading orders: " + e.getMessage());
         }
-
-        // Set the items for the TableView
-        ordersTable.setItems(orderList);
+        return orders;
     }
-
 }

@@ -2,11 +2,14 @@ package com.example.thrifters;
 
 import java.io.IOException;
 
+import com.example.thrifters.controller.LoginController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -17,6 +20,7 @@ public class HelloJavaFX extends Application {
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
+        loadCustomFont();
 
         // Initial scene when the application starts
         loadScene("thriftfindsLoginPage.fxml");
@@ -40,9 +44,24 @@ public class HelloJavaFX extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlFile));
             Scene scene = new Scene(fxmlLoader.load());
             primaryStage.setScene(scene);
+
+            // Check if the loaded scene's controller has a method to set the stage
+            if (fxmlLoader.getController() instanceof LoginController) {
+                LoginController loginController = (LoginController) fxmlLoader.getController();
+                loginController.setStage(primaryStage);  // Passing the stage to the controller
+            }
         } catch (IOException e) {
             // Handle the exception with a user-friendly message
             showErrorMessage("Error loading FXML file: " + fxmlFile);
+        }
+    }
+
+    private void loadCustomFont() {
+        // Load custom font
+        try {
+            Font.loadFont(getClass().getResource("/fonts/FashionSignature.ttf").toExternalForm(), 36);
+        } catch (Exception e) {
+            System.err.println("Error loading font: " + e.getMessage());
         }
     }
 
@@ -71,11 +90,10 @@ public class HelloJavaFX extends Application {
     }
 
     public void switchToLoginPage() {
-        loadScene("thriftfindsLoginPage");
+        loadScene("thriftfindsLoginPage.fxml");
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

@@ -3,14 +3,17 @@ package com.example.thrifters.model;
 public class User {
     private int userId;
     private String username;
-    private String email;
+    private String role;
     private String address;
+    private String email;
 
-    public User(int userId, String username, String email, String address) {
+    public User(int userId, String username, String role, String address, String email) {
         this.userId = userId;
         this.username = username;
-        this.email = email;
+        this.role = role;
         this.address = address;
+        this.email = email;
+        
     }
 
     public int getUserId() {
@@ -43,5 +46,12 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+    public String getRole() {
+        return role; // Getter for role
+    }
+
+    public void setRole(String role) {
+        this.role = role; // Setter for role
     }
 }

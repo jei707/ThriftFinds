@@ -1,4 +1,5 @@
 package com.example.thrifters.controller;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.example.thrifters.database.DatabaseConnection;
+import com.example.thrifters.model.User;
+import com.example.thrifters.service.UserSession;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +42,12 @@ public class LoginController {
     @FXML
     private Hyperlink signUp;
 
+    private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     // This method will be triggered when the "Login" button is clicked
     @FXML
     private void handleLogin() {
@@ -52,33 +61,54 @@ public class LoginController {
         }
 
         // Authenticate user with the database
-        if (isValidUser(username, password)) {
+        User loggedInUser = authenticateUser(username, password);
+
+        if (loggedInUser != null) {
+            // Set user data in the session
+            UserSession.setCurrentUser(loggedInUser); // Set the current user
+            UserSession.setLoggedInUsername(loggedInUser.getUsername()); // Store username in session
+
+            System.out.println("Logged in user: " + loggedInUser.getUsername() + ", Role: " + loggedInUser.getRole());
             showSuccessMessage("Login successful!");
-            loadUserHomePage();
+
+            // Check user role and load appropriate home page
+            if ("admin".equalsIgnoreCase(loggedInUser.getRole())) {
+                System.out.println("Loading admin home page...");
+                loadAdminHomePage();
+            } else {
+                System.out.println("Loading user home page...");
+                loadUserHomePage();
+            }
         } else {
             showErrorMessage("Invalid username or password.");
         }
     }
 
-    // Method to check if the username, password and role are valid
-    private boolean isValidUser(String username, String password) {
+    // Method to check if the username and password are valid, and return a User object
+    private User authenticateUser (String username, String password) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT * FROM Users WHERE username = ? AND password = ?";
+            // Use a parameterized query to prevent SQL injection
+            String query = "SELECT user_id, username, role, address, email FROM Users WHERE username = ? AND password = ?"; // Remember to hash password in production
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
-                statement.setString(2, password);  // Password should ideally be hashed in production
+                statement.setString(2, password); // In production, use hashed password
+    
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        // Check if user is an admin or regular user based on role
-                        String role = resultSet.getString("role");
-                        if (role != null && role.equals("admin")) {
-                            // Admin user, load admin page
-                            loadAdminHomePage();
-                        } else {
-                            // Regular user, load user home page
-                            loadUserHomePage();
-                        }
-                        return true;  // Authentication successful
+                        // Get the role from the database
+                        String role = resultSet.getString("role").trim(); // Trim whitespace
+                        System.out.println("User  Role: '" + role + "'"); // Log the role value with quotes
+    
+                        // Create and return the User object with all required fields
+                        return new User(
+                            resultSet.getInt("user_id"), // Assuming user_id is the unique identifier in the database
+                            resultSet.getString("username"),
+                            role,
+                            resultSet.getString("address"),
+                            resultSet.getString("email")  // Adding email or any missing field
+                        );
+                    } else {
+                        System.out.println("No user found with the provided username and password.");
                     }
                 }
             }
@@ -86,23 +116,25 @@ public class LoginController {
             e.printStackTrace();
             showErrorMessage("Database connection error.");
         }
-        return false;  // Invalid user
+        return null; // Return null if authentication fails
     }
-        // Method to load the admin home page (homeAdminInterface.fxml)
-        private void loadAdminHomePage() {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/thrifters/homeAdminInterface.fxml"));
-                Parent root = loader.load();
-                Stage stage = (Stage) loginButton.getScene().getWindow();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                showErrorMessage("Failed to load admin home page.");
-            }
+    
+
+    // Method to load the admin home page (homeAdminInterface.fxml)
+    private void loadAdminHomePage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/thrifters/homeAdminInterface.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showErrorMessage("Failed to load admin home page.");
         }
-        
+    }
+
     // Method to load the user home page (homeUserInterface.fxml)
     private void loadUserHomePage() {
         try {
@@ -136,7 +168,6 @@ public class LoginController {
         alert.showAndWait();
     }
 
-
     // This method will be triggered when the "Forgot Password" hyperlink is clicked
     @FXML
     private void handleForgotPassword() {
@@ -148,7 +179,6 @@ public class LoginController {
     private void handleSignUp() {
         loadSignUpPage();
     }
-
 
     // Method to show an information message
     private void showInfoMessage(String message) {

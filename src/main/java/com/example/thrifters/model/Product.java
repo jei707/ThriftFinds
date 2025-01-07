@@ -9,9 +9,11 @@ public class Product {
     private double price;
     private int stockLevel;
     private String category;
+    private int quantity; // New field for cart quantity
+    private String imagePath;
 
     // Constructor, getters, and setters
-    public Product(int productId, String name, String description, String size, String type, double price, int stockLevel, String category) {
+    public Product(int productId, String name, String description, String size, String type, double price, int stockLevel, String category, String imagePath) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -20,8 +22,36 @@ public class Product {
         this.price = price;
         this.stockLevel = stockLevel;
         this.category = category;
+        this.quantity = 0; // Default value
+        this.imagePath = imagePath;
     }
 
+    // Overloaded constructor for simpler use cases
+    public Product(int productId, String name, double price, String category, String description, int quantity, String imagePath) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.description = description;
+        this.quantity = quantity;
+        this.imagePath = imagePath;
+
+        // Default values for optional fields
+        this.size = "N/A";
+        this.type = "N/A";
+        this.stockLevel = 0;
+    }
+
+    // Getters and setters
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    // Getters and Setters
     public int getProductId() {
         return productId;
     }
@@ -85,5 +115,12 @@ public class Product {
     public void setCategory(String category) {
         this.category = category;
     }
-}
 
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+}

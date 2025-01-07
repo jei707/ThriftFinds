@@ -76,13 +76,14 @@ public class AdminUserController {
     private void loadUserData() {
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT user_id, username, email, address FROM Users")) {
+             ResultSet resultSet = statement.executeQuery("SELECT user_id, username, email, address, role FROM Users")) {
 
             while (resultSet.next()) {
                 userList.add(new User(
                         resultSet.getInt("user_id"),
                         resultSet.getString("username"),
                         resultSet.getString("email"),
+                        resultSet.getString("address"),
                         resultSet.getString("address")
                 ));
             }

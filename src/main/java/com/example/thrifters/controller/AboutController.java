@@ -49,14 +49,18 @@ public class AboutController {
         // Implement search functionality if needed
     }
 
+    public void onUsersButtonClick(ActionEvent event) {
+        switchScene(event, "/com/example/thrifters/ordersUserInterface.fxml");
+    }
+
     @FXML
     private void onUserProfileClick(ActionEvent event) {
-        switchScene(event, "/com/example/thrifters/userProfile.fxml");
+        switchScene(event, "/com/example/thrifters/profileUserInterface.fxml");
     }
 
     @FXML
     private void onHomeButtonClick(ActionEvent event) {
-        switchScene(event, "/com/example/thrifters/homeUserInterface.fxml");
+        switchScene(event, "/com/example/thrifters/homeAdminInterface.fxml");
     }
 
     @FXML

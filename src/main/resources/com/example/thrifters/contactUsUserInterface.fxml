@@ -17,18 +17,12 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.thrifters.controller.ContactController">
    <children>
       <Accordion layoutX="-43.0" layoutY="140.0" />
-      <TextField fx:id="searchBox" layoutX="215.0" layoutY="20.0" prefHeight="30.0" prefWidth="394.0" promptText="Search" />
-      <ImageView fitHeight="16.0" fitWidth="19.0" layoutX="584.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@ImageView%20Pictures/search-interface-symbol.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="userProfile" defaultButton="true" layoutX="930.0" layoutY="22.0" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Profile" textFill="WHITE">
+      <Button fx:id="userProfile" defaultButton="true" layoutX="1450.0" layoutY="22.0" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Profile" textFill="WHITE">
          <font>
             <Font name="Arial" size="14.0" />
          </font>
       </Button>
-      <ImageView fitHeight="26.0" fitWidth="21.0" layoutX="897.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="26.0" fitWidth="21.0" layoutX="1420.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@ImageView%20Pictures/user.png" />
          </image>
@@ -112,7 +106,7 @@
             </Button>
          </children>
       </Pane>
-      <Pane prefHeight="775.0" prefWidth="190.0" style="-fx-background-color: #909090;">
+      <Pane prefHeight="798.0" prefWidth="200.0" style="-fx-background-color: #909090;">
          <children>
             <ImageView fitHeight="30.0" fitWidth="35.0" layoutX="24.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -149,26 +143,41 @@
             </ButtonBar>
             <ButtonBar layoutX="4.0" layoutY="348.0" prefHeight="40.0" prefWidth="149.0">
                <buttons>
-                  <ImageView fitHeight="22.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="25.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@ImageView%20Pictures/shop%20(2).png" />
+                        <Image url="@ImageView%20Pictures/checklists%20(1).png" />
                      </image>
                   </ImageView>
-                  <Button fx:id="aboutShop3" defaultButton="true" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="About Shop" textFill="WHITE" onAction="#onAboutShopButtonClick">
+                  <Button fx:id="ordersUi" defaultButton="true" minWidth="51.0" mnemonicParsing="false" onAction="#onUsersButtonClick" prefHeight="26.0" prefWidth="96.0" style="-fx-background-color: #8a8a8a;" text="Orders" textFill="WHITE">
                      <font>
                         <Font name="Arial" size="14.0" />
                      </font>
                   </Button>
                </buttons>
             </ButtonBar>
-            <ButtonBar layoutX="-8.0" layoutY="388.0" prefHeight="40.0" prefWidth="159.0">
+
+            <ButtonBar layoutX="4.0" layoutY="388.0" prefHeight="40.0" prefWidth="149.0">
+               <buttons>
+                  <ImageView fitHeight="22.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@ImageView%20Pictures/shop%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="aboutShop" defaultButton="true" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="About Shop" textFill="WHITE" onAction="#onAboutShopButtonClick">
+                     <font>
+                        <Font name="Arial" size="14.0" />
+                     </font>
+                  </Button>
+               </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="-8.0" layoutY="428.0" prefHeight="40.0" prefWidth="159.0">
                <buttons>
                   <ImageView fitHeight="18.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@ImageView%20Pictures/telephone.png" />
                      </image>
                   </ImageView>
-                  <Button fx:id="cantact1" defaultButton="true" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Contact Us" textFill="WHITE">
+                  <Button fx:id="cantact" defaultButton="true" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Contact Us" textFill="WHITE" onAction="#onContactButtonClick">
                      <font>
                         <Font name="Arial" size="14.0" />
                      </font>
@@ -182,16 +191,16 @@
                         <Image url="@ImageView%20Pictures/logout.png" />
                      </image>
                   </ImageView>
-                  <Hyperlink fx:id="logout1" minWidth="35.0" prefHeight="21.0" text="Logout" textFill="WHITE">
+                  <Hyperlink fx:id="logout1" minWidth="35.0" prefHeight="21.0" text="Logout" textFill="WHITE" onAction="#onLogoutClick">
                      <font>
                         <Font name="Arial" size="14.0" />
                      </font>
                   </Hyperlink>
                </buttons>
             </ButtonBar>
-            <Text fill="WHITE" layoutX="48.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thriftfinds">
+            <Text fill="WHITE" layoutX="48.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Thriftfinds">
                <font>
-                  <Font name="Fashion Signature-Personal use" size="24.0" />
+                  <Font name="Fashion Signature-Personal use" size="36.0" />
                </font>
             </Text>
          </children>

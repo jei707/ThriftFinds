@@ -1,6 +1,12 @@
 package com.example.thrifters.controller;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.example.thrifters.database.DatabaseConnection;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
@@ -26,7 +33,7 @@ public class ReportController {
     @FXML private Button orders114; // Report button
     @FXML private Hyperlink logout4;
     @FXML private ImageView searchIcon;
-    @FXML private BarChart<?, ?> reportBarChart;
+    @FXML private BarChart<String, Number> reportBarChart;
 
     private Stage stage;
     private Scene scene;
@@ -94,14 +101,55 @@ public class ReportController {
     @FXML
     public void initialize() {
         System.out.println("ReportController initialized.");
-        // Additional setup logic, such as populating the bar chart
+        // Setup the BarChart by fetching data from the database
         setupBarChart();
     }
 
     // Custom method to populate the BarChart
     private void setupBarChart() {
-        // Example logic for populating the BarChart
-        System.out.println("Setting up BarChart...");
-        // Add data to the chart (implementation dependent on your data source)
+        // Create a new series for the BarChart
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Sales Report");
+
+        // Query the database to fetch sales data
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            if (connection != null) {
+                System.out.println("Connected to database.");
+
+                // SQL query to fetch total sales per month
+                String query = "SELECT DATE_FORMAT(order_date, '%Y-%m') AS month, SUM(total_amount) AS total_sales " +
+                               "FROM Orders " +
+                               "WHERE status = 'completed' " + // Optional: Filter for completed orders
+                               "GROUP BY month " +
+                               "ORDER BY month ASC";
+
+                try (PreparedStatement statement = connection.prepareStatement(query);
+                     ResultSet resultSet = statement.executeQuery()) {
+
+                    // Loop through the result set and populate the chart
+                    while (resultSet.next()) {
+                        String month = resultSet.getString("month");
+                        double totalSales = resultSet.getDouble("total_sales");
+
+                        // Log the values to verify the data
+                        System.out.println("Month: " + month + ", Total Sales: " + totalSales);
+
+                        // Add data to the series (month as X, total_sales as Y)
+                        series.getData().add(new XYChart.Data<>(month, totalSales));
+                    }
+                }
+            } else {
+                System.err.println("Failed to connect to the database.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Add the series to the BarChart
+        if (series.getData().isEmpty()) {
+            System.out.println("No data to display in the chart.");
+        } else {
+            reportBarChart.getData().add(series);
+        }
     }
 }

@@ -22,12 +22,12 @@
             <Image url="@ImageView%20Pictures/search-interface-symbol.png" />
          </image>
       </ImageView>
-      <Button fx:id="userProfile5" defaultButton="true" layoutX="930.0" layoutY="22.0" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Profile" textFill="WHITE">
+      <Button fx:id="userProfile5" defaultButton="true" layoutX="1450.0" layoutY="22.0" minWidth="51.0" mnemonicParsing="false" prefHeight="16.0" style="-fx-background-color: #8a8a8a;" text="Profile" textFill="WHITE">
          <font>
             <Font name="Arial" size="14.0" />
          </font>
       </Button>
-      <ImageView fitHeight="26.0" fitWidth="21.0" layoutX="897.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="26.0" fitWidth="21.0" layoutX="1420.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@ImageView%20Pictures/user.png" />
          </image>

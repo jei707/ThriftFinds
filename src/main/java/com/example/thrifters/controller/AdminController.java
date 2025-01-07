@@ -482,33 +482,28 @@ public class AdminController {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql;
             PreparedStatement stmt;
-
+    
             if (category.equals("All")) {
                 if (searchQuery.isEmpty()) {
-                    // No category filter, no search filter
                     sql = "SELECT * FROM Products";
                     stmt = conn.prepareStatement(sql);
                 } else {
-                    // No category filter, but filter by search query
                     sql = "SELECT * FROM Products WHERE name LIKE ?";
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, "%" + searchQuery + "%");
                 }
             } else {
                 if (searchQuery.isEmpty()) {
-                    // Filter by category only
                     sql = "SELECT * FROM Products WHERE category = ?";
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, category);
                 } else {
-                    // Filter by both category and search query
                     sql = "SELECT * FROM Products WHERE category = ? AND name LIKE ?";
                     stmt = conn.prepareStatement(sql);
                     stmt.setString(1, category);
                     stmt.setString(2, "%" + searchQuery + "%");
                 }
             }
-    
     
             ResultSet rs = stmt.executeQuery();
     
@@ -518,10 +513,16 @@ public class AdminController {
                 String imagePath = rs.getString("image");
                 int stockLevel = rs.getInt("stock_level");
     
-    
                 Image image;
                 try {
-                    image = new Image(new File(imagePath).toURI().toString());
+                    // Ensure the image path is valid
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        image = new Image(imageFile.toURI().toString());
+                    } else {
+                        System.err.println("Image file not found: " + imagePath);
+                        image = new Image("/com/example/thrifters/ImageView Pictures/placeholder.jpg");
+                    }
                 } catch (Exception e) {
                     System.err.println("Error loading image: " + imagePath);
                     image = new Image("/com/example/thrifters/ImageView Pictures/placeholder.jpg");

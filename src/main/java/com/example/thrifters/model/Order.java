@@ -1,18 +1,25 @@
 package com.example.thrifters.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Order {
     private int orderId;
     private int userId;
-    private Date orderDate;
+    private Timestamp orderDate;
     private String address;
+    private double totalAmount;
+    private String status;
 
-    public Order(int orderId, int userId, Date orderDate, String address) {
+    // Constructor
+    public Order(int orderId, int userId, Timestamp orderDate, String address, double totalAmount, String status) {
         this.orderId = orderId;
         this.userId = userId;
         this.orderDate = orderDate;
         this.address = address;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        
+        
     }
 
     // Getters and setters
@@ -32,11 +39,11 @@ public class Order {
         this.userId = userId;
     }
 
-    public Date getOrderDate() {
+    public Timestamp getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Date orderDate) {
+    public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
 
@@ -46,5 +53,21 @@ public class Order {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
