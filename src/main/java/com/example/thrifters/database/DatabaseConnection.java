@@ -16,7 +16,7 @@ public class DatabaseConnection {
     private static final String DB_PASSWORD = "";
 
     // Path to the SQL file for database initialization
-    private static final String SQL_FILE_PATH = "src/main/java/com/example/thrifters/database/thriftfinds.sql";
+    private static final String SQL_FILE_PATH = "C:/Users/User/Desktop/ThriftFinds/OOP/src/main/java/com/example/thrifters/database/thriftfinds.sql";
 
     // Singleton connection instance
     private static Connection connection;
@@ -30,7 +30,7 @@ public class DatabaseConnection {
     public static synchronized Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             try {
-                // Create connection to the MySQL server
+                // Connect to the MySQL server
                 Connection serverConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
                 // Initialize the database if necessary
@@ -56,20 +56,27 @@ public class DatabaseConnection {
      */
     private static void initializeDatabase(Connection serverConnection) throws SQLException, IOException {
         try (Statement statement = serverConnection.createStatement()) {
-            // Check if the database exists and create it if not
+            // Create the database if it does not exist
             statement.execute("CREATE DATABASE IF NOT EXISTS " + DB_NAME);
             System.out.println("Database " + DB_NAME + " created or already exists.");
 
             // Check if the SQL file exists and execute it
             if (Files.exists(Paths.get(SQL_FILE_PATH))) {
                 String sql = new String(Files.readAllBytes(Paths.get(SQL_FILE_PATH)));
+
+                // Split SQL commands by semicolon and execute them individually
+                String[] sqlCommands = sql.split(";");
                 try (Connection dbConnection = DriverManager.getConnection(DB_URL + DB_NAME, DB_USER, DB_PASSWORD);
                      Statement dbStatement = dbConnection.createStatement()) {
-                    dbStatement.execute(sql);
+                    for (String command : sqlCommands) {
+                        if (!command.trim().isEmpty()) {
+                            dbStatement.execute(command.trim());
+                        }
+                    }
                     System.out.println("Database initialized successfully from SQL file.");
                 }
             } else {
-                System.out.println("SQL file not found: " + SQL_FILE_PATH);
+                System.err.println("SQL file not found at: " + SQL_FILE_PATH);
             }
         }
     }
